@@ -17,55 +17,57 @@ tall_contractions = {"Won't" : "Will not", "Shan't" : "Shall not", "Isn't" : "Is
 
 def main():
     file_name = input("Enter the name of the file:\n")
-    out_file = file_name[0:file_name.find(".txt")] + "edited.txt"
+    out_file = file_name[0 : file_name.find(".txt")] + " edited" + file_name[file_name.find(".") :]
+    output = open(out_file, "w")
     count = 0
     try:
         the_file = open(file_name, "r")
         words = the_file.read()
-        print(words)
+        the_file.close()
         words = words.split()
         for word in words:
             if "'s" in word:
                 pre = word[0:word.find("'")]
-                post = word[word.find("'s") + 2:]
-                print(pre + " is" + post, end = " ")
+                post = word[word.find("'s") + 2 :]
+                print(pre + " is" + post, end = " ", file = output)
                 count += 1
             elif "'ll" in word:
                 pre = word[0:word.find("'")]
-                post = word[word.find("'ll") + 3:]
-                print(pre + " will" + post, end = " ")
+                post = word[word.find("'ll") + 3 :]
+                print(pre + " will" + post, end = " ", file = output)
                 count += 1
             elif "'d" in word:
                 pre = word[0:word.find("'")]
-                post = word[word.find("'d") + 2:]
-                print(pre + " would" + post, end = " ")
+                post = word[word.find("'d") + 2 :]
+                print(pre + " would" + post, end = " ", file = output)
                 count += 1
             elif "'ve" in word:
                 pre = word[0:word.find("'")]
-                post = word[word.find("'ve") + 3:]
-                print(pre + " have" + post, end = " ")
+                post = word[word.find("'ve") + 3 :]
+                print(pre + " have" + post, end = " ", file = output)
                 count += 1
             elif "'re" in word:
                 pre = word[0:word.find("'")]
-                post = word[word.find("'re") + 3:]
-                print(pre + " are" + post, end = " ")
+                post = word[word.find("'re") + 3 :]
+                print(pre + " are" + post, end = " ", file = output)
                 count += 1
             elif "'m" in word:
                 pre = word[0:word.find("'")]
-                post = word[word.find("'m") + 2:]
-                print(pre + " am" + post, end = " ")
+                post = word[word.find("'m") + 2 :]
+                print(pre + " am" + post, end = " ", file = output)
                 count += 1
             elif word in contractions:
-                print(contractions[word], end = " ")
+                print(contractions[word], end = " ", file = output)
                 count += 1
             elif word in tall_contractions:
-                print(tall_contractions[word], end = " ")
+                print(tall_contractions[word], end = " ", file = output)
                 count += 1
             else:
-                print(word, end = " ")
+                print(word, end = " ", file = output)
     except FileNotFoundError:
-        print("Where the file at tho?")
-    print()
+        print("File not found. Ensure you've typed the file name (as well as the file extension) correctly.")
+    output.close()
+    print("Output file \"" + out_file + "\" written to successfully.")
     print(str(count) + " replacements made.")
 
 

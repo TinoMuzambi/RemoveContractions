@@ -3,8 +3,12 @@
 # Remove contractions from your essays
 
 
-contractions = {"it's" : "it is", "i'll" : "i will", "won't" : "will not", "shan't" : "shall not"}
-tall_contractions = {"It's" : "It is", "I'll" : "I will", "Won't" : "Will not", "Shan't" : "Shall not"}
+contractions = {"won't" : "will not", "shan't" : "shall not", "isn't" : "is not", "aren't" : "are not",
+                "wasn't" : "was not", "weren't" : "were not", "haven't" : "have not", "hasn't" : "has not",
+                "hadn't" : "had not", "wouldn't" : "would not", "don't" : "do not", "does not" : "does not",
+                "didn't" : "did not", "can't" : "cannot", "shouldn't" : "should not", "mightn't" : "might not",
+                "mustn't" : "must not"}
+tall_contractions = {}
 
 
 def main():
@@ -12,16 +16,37 @@ def main():
     try:
         the_file = open(file_name, "r")
         words = the_file.read()
-        words = words.split()
         print(words)
+        words = words.split()
         for word in words:
-            if word in contractions:
+            if "'s" in word:
+                pre = word[0:word.find("'")]
+                post = word[word.find("'s") + 2:]
+                print(pre + " is" + post, end = " ")
+            elif "'ll" in word:
+                pre = word[0:word.find("'")]
+                post = word[word.find("'ll") + 3:]
+                print(pre + " will" + post, end = " ")
+            elif "'d" in word:
+                pre = word[0:word.find("'")]
+                post = word[word.find("'d") + 2:]
+                print(pre + " would" + post, end = " ")
+            elif "'ve" in word:
+                pre = word[0:word.find("'")]
+                post = word[word.find("'ve") + 3:]
+                print(pre + " have" + post, end = " ")
+            elif "'re" in word:
+                pre = word[0:word.find("'")]
+                post = word[word.find("'re") + 3:]
+                print(pre + " are" + post, end = " ")
+            elif "'m" in word:
+                pre = word[0:word.find("'")]
+                post = word[word.find("'m") + 2:]
+                print(pre + " am" + post, end = " ")
+            elif word in contractions:
                 print(contractions[word], end = " ")
             elif word in tall_contractions:
                 print(tall_contractions[word], end = " ")
-            elif "'s" in word:
-                pre = word[0:word.find("'")]
-                print(pre + " is", end = " ")
             else:
                 print(word, end = " ")
     except FileNotFoundError:

@@ -7,12 +7,14 @@ contractions = {"won't" : "will not", "shan't" : "shall not", "isn't" : "is not"
                 "wasn't" : "was not", "weren't" : "were not", "haven't" : "have not", "hasn't" : "has not",
                 "hadn't" : "had not", "wouldn't" : "would not", "don't" : "do not", "doesn't" : "does not",
                 "didn't" : "did not", "can't" : "cannot", "shouldn't" : "should not", "mightn't" : "might not",
-                "mustn't" : "must not"}
+                "mustn't" : "must not", "couldn't" : "could not", "'tis" : "it is", "'twas" : "it was",
+                "ain't" : "are not"}
 tall_contractions = {"Won't" : "Will not", "Shan't" : "Shall not", "Isn't" : "Is not", "Aren't" : "Are not",
                      "Wasn't" : "Was not", "Weren't" : "Were not", "Haven't" : "Have not", "Hasn't" : "Has not",
                      "Hadn't" : "Had not", "Wouldn't" : "Would not", "Don't" : "Do not", "Doesn't" : "Does not",
                      "Didn't" : "Did not", "Can't" : "Cannot", "Shouldn't" : "Should not", "Mightn't" : "Might not",
-                     "Mustn't" : "Must not"}
+                     "Mustn't" : "Must not", "Couldn't" : "Could not", "'Tis" : "It is", "'Twas" : "It was",
+                     "Ain't" : "Are not"}
 
 
 def main():
@@ -34,16 +36,22 @@ def main():
             elif "'ll" in word:
                 pre = word[0:word.find("'")]
                 post = word[word.find("'ll") + 3 :]
+                if pre == "i":
+                    pre = "I"
                 print(pre + " will" + post, end = " ", file = output)
                 count += 1
             elif "'d" in word:
                 pre = word[0:word.find("'")]
                 post = word[word.find("'d") + 2 :]
+                if pre == "i":
+                    pre = "I"
                 print(pre + " would" + post, end = " ", file = output)
                 count += 1
             elif "'ve" in word:
                 pre = word[0:word.find("'")]
                 post = word[word.find("'ve") + 3 :]
+                if pre == "i":
+                    pre = "I"
                 print(pre + " have" + post, end = " ", file = output)
                 count += 1
             elif "'re" in word:
@@ -54,6 +62,8 @@ def main():
             elif "'m" in word:
                 pre = word[0:word.find("'")]
                 post = word[word.find("'m") + 2 :]
+                if pre == "i":
+                    pre = "I"
                 print(pre + " am" + post, end = " ", file = output)
                 count += 1
             elif word in contractions:

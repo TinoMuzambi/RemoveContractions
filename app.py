@@ -28,28 +28,22 @@ class InputForm(Form):
 
 
 def process_file(words):
-    # file_name = input("Enter the name of the file:\n")
-    # out_file = file_name[0 : file_name.find(".txt")] + " edited" + file_name[file_name.find(".") :]
-    # output = open(out_file, "w")
     result_file = ""
     count = 0
-    words = words.replace("’", "'")
+    words = words.replace("’", "'")  # Replace weird apostrophe with utf-8 version.
     delims = " ", "\r"
-    pattern = "|".join(map(re.escape, delims))
+    pattern = "|".join(map(re.escape, delims))  # Join multiple different delimeters.
     words = re.split(pattern, words)
     for word in words:
-        if word == "":
+        if word == "":                                          # Special cases for replacing contractions.
             result_file += "\n\n"
-            # print("\n\n", file=output)
         elif "let's" in word:
             result_file += "let us" + " "
-            # print(" let us , file = output)
             count += 1
         elif "'s" in word:
             pre = word[0:word.find("'")]
             post = word[word.find("'s") + 2:]
             result_file += pre + " is" + post + " "
-            # print(pre + " is" + post, end = " ", file = output)
             count += 1
         elif "'ll" in word:
             pre = word[0:word.find("'")]
@@ -57,7 +51,6 @@ def process_file(words):
             if pre == "i":
                 pre = "I"
             result_file += pre + " will" + post + " "
-            # print(pre + " will" + post, end = " ", file = output)
             count += 1
         elif "'d" in word:
             pre = word[0:word.find("'")]
@@ -65,7 +58,6 @@ def process_file(words):
             if pre == "i":
                 pre = "I"
             result_file += pre + " would" + post + " "
-            # print(pre + " would" + post, end = " ", file = output)
             count += 1
         elif "'ve" in word:
             pre = word[0:word.find("'")]
@@ -73,13 +65,11 @@ def process_file(words):
             if pre == "i":
                 pre = "I"
             result_file += pre + " have" + post + " "
-            # print(pre + " have" + post, end = " ", file = output)
             count += 1
         elif "'re" in word:
             pre = word[0:word.find("'")]
             post = word[word.find("'re") + 3:]
             result_file += pre + " are" + post + " "
-            # print(pre + " are" + post, end = " ", file = output)
             count += 1
         elif "'m" in word:
             pre = word[0:word.find("'")]
@@ -87,21 +77,15 @@ def process_file(words):
             if pre == "i":
                 pre = "I"
             result_file += pre + " am" + post + " "
-            # print(pre + " am" + post, end = " ", file = output)
             count += 1
-        elif word in contractions:
+        elif word in contractions:                                        # Standard contraction replacement with dict.
             result_file += contractions[word] + " "
-            # print(contractions[word], end = " ", file = output)
             count += 1
-        elif word in tall_contractions:
+        elif word in tall_contractions:                   # Standard contraction replacement for uppercase with dict.
             result_file += tall_contractions[word] + " "
-            # print(tall_contractions[word], end = " ", file = output)
             count += 1
         else:
-            result_file += word + " "
-            # print(word, end = " ", file = output)
-    # output.close()
-    # print("Output file \"" + out_file + "\" written to successfully.")
+            result_file += word + " "                   # Else word isn't a contraction and it passes through.
 
     result_file += "\n\n" + str(count) + " replacements made."
     return result_file

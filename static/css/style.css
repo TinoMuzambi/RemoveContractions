@@ -50,7 +50,7 @@ body {
     background: transparent;
     font-size: 20px;
     border: none;
-    width: 50%;
+    width: 90%;
     height: 300px;
 }
 .form-holder .output-container .output-field:focus {

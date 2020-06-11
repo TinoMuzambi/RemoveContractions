@@ -4,6 +4,7 @@
 from flask import Flask, render_template, request, flash, redirect, url_for
 from werkzeug.utils import secure_filename
 import os
+import re
 
 
 UPLOAD_FOLDER = './files/'
@@ -51,12 +52,21 @@ def process_file(file_name):
         words = the_file.read()
         words = words.replace("’", "'")
         the_file.close()
-        words = words.split()
+        delims = " ", "\n"
+        pattern = "|".join(map(re.escape, delims))
+        words = re.split(pattern, words)
         for word in words:
-            if "'s" in word:
+            if word == "":
+                result_file += "\n\n"
+                # print("\n\n", file=output)
+            elif "let's" in word:
+                result_file += "let us" + " "
+                # print(" let us , file = output)
+                count += 1
+            elif "'s" in word:
                 pre = word[0:word.find("'")]
                 post = word[word.find("'s") + 2 :]
-                result_file += pre + " is " + post + " "
+                result_file += pre + " is" + post + " "
                 # print(pre + " is" + post, end = " ", file = output)
                 count += 1
             elif "'ll" in word:
@@ -64,7 +74,7 @@ def process_file(file_name):
                 post = word[word.find("'ll") + 3 :]
                 if pre == "i":
                     pre = "I"
-                result_file += pre + " will " + post + " "
+                result_file += pre + " will" + post + " "
                 # print(pre + " will" + post, end = " ", file = output)
                 count += 1
             elif "'d" in word:
@@ -72,7 +82,7 @@ def process_file(file_name):
                 post = word[word.find("'d") + 2 :]
                 if pre == "i":
                     pre = "I"
-                result_file += pre + " would " + post + " "
+                result_file += pre + " would" + post + " "
                 # print(pre + " would" + post, end = " ", file = output)
                 count += 1
             elif "'ve" in word:
@@ -80,13 +90,13 @@ def process_file(file_name):
                 post = word[word.find("'ve") + 3 :]
                 if pre == "i":
                     pre = "I"
-                result_file += pre + " have " + post + " "
+                result_file += pre + " have" + post + " "
                 # print(pre + " have" + post, end = " ", file = output)
                 count += 1
             elif "'re" in word:
                 pre = word[0:word.find("'")]
                 post = word[word.find("'re") + 3 :]
-                result_file += pre + " are " + post + " "
+                result_file += pre + " are" + post + " "
                 # print(pre + " are" + post, end = " ", file = output)
                 count += 1
             elif "'m" in word:
@@ -94,7 +104,7 @@ def process_file(file_name):
                 post = word[word.find("'m") + 2 :]
                 if pre == "i":
                     pre = "I"
-                result_file += pre + " am " + post + " "
+                result_file += pre + " am" + post + " "
                 # print(pre + " am" + post, end = " ", file = output)
                 count += 1
             elif word in contractions:

@@ -60,7 +60,7 @@ def process_file(file_name):
     count = 0
     print(file_name)
     try:
-        the_file = open(file_name, encoding="utf-8")
+        the_file = open(os.path.dirname(__file__) + file_name, encoding="utf-8")
         words = the_file.read()
         words = words.replace("’", "'")
         the_file.close()

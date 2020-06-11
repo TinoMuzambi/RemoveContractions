@@ -10,7 +10,7 @@ import shutil
 import signal
 
 
-UPLOAD_FOLDER = './files/'
+UPLOAD_FOLDER = './tmp'
 ALLOWED_EXTENSIONS = {'txt'}
 MAX_SIZE = 20 * 1024 * 1024
 

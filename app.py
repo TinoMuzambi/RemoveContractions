@@ -1,6 +1,18 @@
 # Tino Muzambi
 # 2019/08/19 08:59
 # Remove contractions from your essays
+from flask import Flask, render_template, request
+from werkzeug.utils import secure_filename
+
+
+UPLOAD_FOLDER = './files'
+ALLOWED_EXTENSIONS = {'.txt'}
+MAX_SIZE = 30000000
+
+
+app = Flask(__name__)
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['MAX_CONTENT_PATH'] = MAX_SIZE
 
 
 contractions = {"won't" : "will not", "shan't" : "shall not", "isn't" : "is not", "aren't" : "are not",
@@ -15,6 +27,23 @@ tall_contractions = {"Won't" : "Will not", "Shan't" : "Shall not", "Isn't" : "Is
                      "Didn't" : "Did not", "Can't" : "Cannot", "Shouldn't" : "Should not", "Mightn't" : "Might not",
                      "Mustn't" : "Must not", "Couldn't" : "Could not", "'Tis" : "It is", "'Twas" : "It was",
                      "Ain't" : "Are not"}
+
+
+@app.route('/upload')
+def upload_file():
+    return render_template('upload.html')
+
+
+@app.route('/uploader', methods=['GET', 'POST'])
+def upload_files():
+    if request.method == 'POST':
+        f = request.files['file']
+        f.save('./' + UPLOAD_FOLDER + '/' + secure_filename(f.filename))
+        return 'file uploaded successfully'
+
+
+if __name__ == '__main__':
+    app.run(debug=True)
 
 
 def main():
@@ -79,7 +108,3 @@ def main():
     output.close()
     print("Output file \"" + out_file + "\" written to successfully.")
     print(str(count) + " replacements made.")
-
-
-if __name__ == '__main__':
-    main()

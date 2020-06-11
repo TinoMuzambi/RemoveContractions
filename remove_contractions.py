@@ -23,8 +23,9 @@ def main():
     output = open(out_file, "w")
     count = 0
     try:
-        the_file = open(file_name, "r")
+        the_file = open(file_name, "r", encoding="utf-8")
         words = the_file.read()
+        words = words.replace("’", "'")
         the_file.close()
         words = words.split()
         for word in words:

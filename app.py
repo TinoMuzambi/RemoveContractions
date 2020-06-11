@@ -40,6 +40,82 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
+def process_file(file_name):
+    # file_name = input("Enter the name of the file:\n")
+    # out_file = file_name[0 : file_name.find(".txt")] + " edited" + file_name[file_name.find(".") :]
+    # output = open(out_file, "w")
+    result_file = ""
+    count = 0
+    try:
+        the_file = open(file_name, "r", encoding="utf-8")
+        words = the_file.read()
+        the_file.close()
+        words = words.split()
+        for word in words:
+            if "'s" in word:
+                pre = word[0:word.find("'")]
+                post = word[word.find("'s") + 2 :]
+                result_file += pre + " is " + post + " "
+                # print(pre + " is" + post, end = " ", file = output)
+                count += 1
+            elif "'ll" in word:
+                pre = word[0:word.find("'")]
+                post = word[word.find("'ll") + 3 :]
+                if pre == "i":
+                    pre = "I"
+                result_file += pre + " will " + post + " "
+                # print(pre + " will" + post, end = " ", file = output)
+                count += 1
+            elif "'d" in word:
+                pre = word[0:word.find("'")]
+                post = word[word.find("'d") + 2 :]
+                if pre == "i":
+                    pre = "I"
+                result_file += pre + " would " + post + " "
+                # print(pre + " would" + post, end = " ", file = output)
+                count += 1
+            elif "'ve" in word:
+                pre = word[0:word.find("'")]
+                post = word[word.find("'ve") + 3 :]
+                if pre == "i":
+                    pre = "I"
+                result_file += pre + " have " + post + " "
+                # print(pre + " have" + post, end = " ", file = output)
+                count += 1
+            elif "'re" in word:
+                pre = word[0:word.find("'")]
+                post = word[word.find("'re") + 3 :]
+                result_file += pre + " are " + post + " "
+                # print(pre + " are" + post, end = " ", file = output)
+                count += 1
+            elif "'m" in word:
+                pre = word[0:word.find("'")]
+                post = word[word.find("'m") + 2 :]
+                if pre == "i":
+                    pre = "I"
+                result_file += pre + " am " + post + " "
+                # print(pre + " am" + post, end = " ", file = output)
+                count += 1
+            elif word in contractions:
+                result_file += contractions[word] + " "
+                # print(contractions[word], end = " ", file = output)
+                count += 1
+            elif word in tall_contractions:
+                result_file += tall_contractions[word] + " "
+                # print(tall_contractions[word], end = " ", file = output)
+                count += 1
+            else:
+                result_file += word + " "
+                # print(word, end = " ", file = output)
+    except FileNotFoundError:
+        print("File not found. Ensure you've typed the file name (as well as the file extension) correctly.")
+    # output.close()
+    # print("Output file \"" + out_file + "\" written to successfully.")
+
+    result_file += "\n\n" + str(count) + " replacements made."
+    return result_file
+
+
 @app.route('/uploader', methods=['GET', 'POST'])
 def upload_files():
     if request.method == 'POST':
@@ -55,73 +131,15 @@ def upload_files():
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            return "Uploaded succesfully"
-        return render_template('upload.html')
+            result = process_file("./files/" + filename)
+            print(result)
+            return render_template('index.html', result=result)
+
+
+@app.route("/", methods=['GET', 'POST'])
+def index():
+    return render_template('index.html')
 
 
 if __name__ == '__main__':
     app.run(debug=True)
-
-
-def main():
-    file_name = input("Enter the name of the file:\n")
-    out_file = file_name[0 : file_name.find(".txt")] + " edited" + file_name[file_name.find(".") :]
-    output = open(out_file, "w")
-    count = 0
-    try:
-        the_file = open(file_name, "r")
-        words = the_file.read()
-        the_file.close()
-        words = words.split()
-        for word in words:
-            if "'s" in word:
-                pre = word[0:word.find("'")]
-                post = word[word.find("'s") + 2 :]
-                print(pre + " is" + post, end = " ", file = output)
-                count += 1
-            elif "'ll" in word:
-                pre = word[0:word.find("'")]
-                post = word[word.find("'ll") + 3 :]
-                if pre == "i":
-                    pre = "I"
-                print(pre + " will" + post, end = " ", file = output)
-                count += 1
-            elif "'d" in word:
-                pre = word[0:word.find("'")]
-                post = word[word.find("'d") + 2 :]
-                if pre == "i":
-                    pre = "I"
-                print(pre + " would" + post, end = " ", file = output)
-                count += 1
-            elif "'ve" in word:
-                pre = word[0:word.find("'")]
-                post = word[word.find("'ve") + 3 :]
-                if pre == "i":
-                    pre = "I"
-                print(pre + " have" + post, end = " ", file = output)
-                count += 1
-            elif "'re" in word:
-                pre = word[0:word.find("'")]
-                post = word[word.find("'re") + 3 :]
-                print(pre + " are" + post, end = " ", file = output)
-                count += 1
-            elif "'m" in word:
-                pre = word[0:word.find("'")]
-                post = word[word.find("'m") + 2 :]
-                if pre == "i":
-                    pre = "I"
-                print(pre + " am" + post, end = " ", file = output)
-                count += 1
-            elif word in contractions:
-                print(contractions[word], end = " ", file = output)
-                count += 1
-            elif word in tall_contractions:
-                print(tall_contractions[word], end = " ", file = output)
-                count += 1
-            else:
-                print(word, end = " ", file = output)
-    except FileNotFoundError:
-        print("File not found. Ensure you've typed the file name (as well as the file extension) correctly.")
-    output.close()
-    print("Output file \"" + out_file + "\" written to successfully.")
-    print(str(count) + " replacements made.")

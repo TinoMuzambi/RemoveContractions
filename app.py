@@ -34,7 +34,7 @@ def process_file(words):
     result_file = ""
     count = 0
     words = words.replace("’", "'")
-    delims = " ", "\n"
+    delims = " ", "\r"
     pattern = "|".join(map(re.escape, delims))
     words = re.split(pattern, words)
     for word in words:

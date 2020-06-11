@@ -5,6 +5,9 @@ from flask import Flask, render_template, request, flash, redirect, url_for
 from werkzeug.utils import secure_filename
 import os
 import re
+import atexit
+import shutil
+import signal
 
 
 UPLOAD_FOLDER = './files/'
@@ -29,6 +32,19 @@ tall_contractions = {"Won't" : "Will not", "Shan't" : "Shall not", "Isn't" : "Is
                      "Didn't" : "Did not", "Can't" : "Cannot", "Shouldn't" : "Should not", "Mightn't" : "Might not",
                      "Mustn't" : "Must not", "Couldn't" : "Could not", "'Tis" : "It is", "'Twas" : "It was",
                      "Ain't" : "Are not"}
+
+
+def exit_handler():
+    folder = './files'
+    for filename in os.listdir(folder):
+        file_path = os.path.join(folder, filename)
+        try:
+            if os.path.isfile(file_path) or os.path.islink(file_path):
+                os.unlink(file_path)
+            elif os.path.isdir(file_path):
+                shutil.rmtree(file_path)
+        except Exception as e:
+            print('Failed to delete %s. Reason: %s' % (file_path, e))
 
 
 def allowed_file(filename):
@@ -154,4 +170,9 @@ def index():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    atexit.register(exit_handler)
+    signal.signal(signal.SIGINT, exit_handler)
+    try:
+        app.run(debug=True)
+    finally:
+        exit_handler()

@@ -58,7 +58,8 @@ def process_file(file_name):
     # output = open(out_file, "w")
     result_file = ""
     count = 0
-    print(file_name)
+    print(os.path.dirname(__file__) + file_name)
+    print("processing")
     try:
         the_file = open(os.path.dirname(__file__) + file_name, encoding="utf-8")
         words = the_file.read()

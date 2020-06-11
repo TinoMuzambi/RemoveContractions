@@ -1,12 +1,13 @@
 body {
     margin: 0;
     padding: 0;
+    position: absolute;
     width: 100%;
-    font-family: "Verdana";
+    font-family: "Verdana", sans-serif;
     background: url("../background.jpg");
 }
 .form-holder {
-    position: fixed;
+    position: relative;
     top: 1%;
     left: 10%;
     width: 80%;
@@ -19,7 +20,7 @@ body {
 }
 .form-holder .contents-center {
     width: 100%;
-    margin-left: 33.3%;
+    /*margin-left: 33.3%;*/
 }
 .form-holder .form-container {
     background: transparent;
@@ -27,16 +28,12 @@ body {
 .form-holder .form-container .elements {
     background: transparent;
 }
+.form-holder .form-container .string {
+    height: 200px;
+}
 .form-holder .errors {
     color: red;
     list-style: none;
-}
-.form-holder .choose {
-    background: transparent;
-    /*border: solid 2px;*/
-    border-radius: 0%;
-    left: 40px;
-    /*width: 200px;*/
 }
 .form-holder .btn {
     background: transparent;
@@ -55,15 +52,6 @@ body {
     border: none;
     width: 50%;
     height: 300px;
-    resize: none;
-}
-.form-holder .output-container .output-field {
-    background: transparent;
-    font-size: 20px;
-    border: none;
-    width: 50%;
-    height: 300px;
-    resize: none;
 }
 .form-holder .output-container .output-field:focus {
     border: none;

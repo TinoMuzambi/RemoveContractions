@@ -1,2 +1,4 @@
 # RemoveContractions
-This simple application takes a file containing written words and replaces any contractions found with their full form. Currently only text files are supported. Just select the file and click uncontract. Max file size is 20MB, anything bigger will close the server.<br>All files are deleted at the end of the session.
+http://remove-contractions.tinomuzambi.com
+
+This simple application takes a file containing written words and replaces any contractions found with their full form. Currently only text files are supported. Just enter/paste your text and click uncontract.

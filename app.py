@@ -1,23 +1,12 @@
 # Tino Muzambi
 # 2019/08/19 08:59
 # Remove contractions from your essays
-from flask import Flask, render_template, request, flash, redirect, url_for
-from werkzeug.utils import secure_filename
-import os
 import re
-import atexit
-import shutil
-import signal
+
+from flask import Flask, render_template, request
 from wtforms import Form, TextAreaField, validators
 
-UPLOAD_FOLDER = './tmp/'
-ALLOWED_EXTENSIONS = {'txt'}
-MAX_SIZE = 20 * 1024 * 1024
-MYDIR = os.path.dirname(__file__)
-
 app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config['MAX_CONTENT_LENGTH'] = MAX_SIZE
 
 contractions = {"won't": "will not", "shan't": "shall not", "isn't": "is not", "aren't": "are not",
                 "wasn't": "was not", "weren't": "were not", "haven't": "have not", "hasn't": "has not",

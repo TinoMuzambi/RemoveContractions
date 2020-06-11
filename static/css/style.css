@@ -31,6 +31,13 @@ body {
     color: red;
     list-style: none;
 }
+.form-holder .choose {
+    background: transparent;
+    /*border: solid 2px;*/
+    border-radius: 0%;
+    left: 40px;
+    /*width: 200px;*/
+}
 .form-holder .btn {
     background: transparent;
     border: solid 2px;
@@ -46,7 +53,15 @@ body {
     background: transparent;
     font-size: 20px;
     border: none;
-    width: 30%;
+    width: 50%;
+    height: 300px;
+    resize: none;
+}
+.form-holder .output-container .output-field {
+    background: transparent;
+    font-size: 20px;
+    border: none;
+    width: 50%;
     height: 300px;
     resize: none;
 }

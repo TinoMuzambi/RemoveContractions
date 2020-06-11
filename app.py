@@ -31,11 +31,6 @@ tall_contractions = {"Won't" : "Will not", "Shan't" : "Shall not", "Isn't" : "Is
                      "Ain't" : "Are not"}
 
 
-@app.route('/upload')
-def upload_file():
-    return render_template('upload.html')
-
-
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -144,6 +139,8 @@ def upload_files():
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             result = process_file("./files/" + filename)
             return render_template('index.html', result=result)
+        result = "Please choose only text files."
+        return render_template('index.html', result=result)
 
 
 @app.route("/", methods=['GET', 'POST'])

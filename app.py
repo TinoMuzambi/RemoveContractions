@@ -10,7 +10,7 @@ import shutil
 import signal
 
 
-UPLOAD_FOLDER = './tmp'
+UPLOAD_FOLDER = './tmp/'
 ALLOWED_EXTENSIONS = {'txt'}
 MAX_SIZE = 20 * 1024 * 1024
 
@@ -35,7 +35,7 @@ tall_contractions = {"Won't" : "Will not", "Shan't" : "Shall not", "Isn't" : "Is
 
 
 def exit_handler():
-    folder = './files'
+    folder = './tmp'
     for filename in os.listdir(folder):
         file_path = os.path.join(folder, filename)
         try:
@@ -158,7 +158,7 @@ def upload_files():
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            result = process_file("./files/" + filename)
+            result = process_file("./tmp/" + filename)
             return render_template('index.html', result=result)
         result = "Please choose only text files."
         return render_template('index.html', result=result)

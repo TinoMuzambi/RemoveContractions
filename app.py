@@ -13,7 +13,7 @@ import signal
 UPLOAD_FOLDER = './tmp/'
 ALLOWED_EXTENSIONS = {'txt'}
 MAX_SIZE = 20 * 1024 * 1024
-
+MYDIR = os.path.dirname(__file__)
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -157,7 +157,7 @@ def upload_files():
             return redirect(request.url)
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            file.save(os.path.join(MYDIR, "/", app.config['UPLOAD_FOLDER'], filename))
             result = process_file("./tmp/" + filename)
             return render_template('index.html', result=result)
         result = "Please choose only text files."

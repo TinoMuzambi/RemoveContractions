@@ -47,8 +47,9 @@ def process_file(file_name):
     result_file = ""
     count = 0
     try:
-        the_file = open(file_name, "r", encoding="utf-8")
+        the_file = open(file_name, encoding="utf-8")
         words = the_file.read()
+        words = words.replace("’", "'")
         the_file.close()
         words = words.split()
         for word in words:
@@ -132,7 +133,6 @@ def upload_files():
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             result = process_file("./files/" + filename)
-            print(result)
             return render_template('index.html', result=result)
 
 

@@ -9,12 +9,12 @@ import re
 
 UPLOAD_FOLDER = './files/'
 ALLOWED_EXTENSIONS = {'txt'}
-MAX_SIZE = 30000000
+MAX_SIZE = 20 * 1024 * 1024
 
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config['MAX_CONTENT_PATH'] = MAX_SIZE
+app.config['MAX_CONTENT_LENGTH'] = MAX_SIZE
 
 
 contractions = {"won't" : "will not", "shan't" : "shall not", "isn't" : "is not", "aren't" : "are not",
@@ -120,6 +120,11 @@ def process_file(file_name):
 
     result_file += "\n\n" + str(count) + " replacements made."
     return result_file
+
+
+@app.errorhandler(413)
+def request_entity_too_large(error):
+    return "File too large", 413
 
 
 @app.route('/uploader', methods=['GET', 'POST'])

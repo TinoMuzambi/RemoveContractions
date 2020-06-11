@@ -160,6 +160,7 @@ def upload_files():
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(MYDIR, "/", app.config['UPLOAD_FOLDER'], filename))
+            os.mkdir("tmp")
             result = process_file("./tmp/" + filename)
             return render_template('index.html', result=result)
         result = "Please choose only text files."

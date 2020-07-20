@@ -61,10 +61,8 @@ p{
 html, body {
     margin: 0;
     padding: 0;
-    position: absolute;
     width: 100%;
-    background: url("../bg.png") no-repeat;
-    background-size: cover;
+    background: url("../bg.png");
 
     /*      Theme colors        */
   --text-gray: #3f4954;
@@ -94,7 +92,6 @@ html, body {
 }
 .form-holder .contents-center {
     width: 100%;
-    /*margin-left: 33.3%;*/
 }
 .form-holder .form-container {
     background: transparent;

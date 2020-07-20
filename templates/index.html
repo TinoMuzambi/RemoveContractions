@@ -25,7 +25,7 @@
         <p>This simple application takes text and replaces any contractions found with their full
             form. Just enter/paste your text and click uncontract.</p>
         <div class="contents-center">
-            <h3>Enter your text here:</h3>
+            <h2>Enter your text here:</h2>
             <form class="form-container" method=post action="">
                 <table class="elements">
                     {% for field in form %}
@@ -41,7 +41,7 @@
                     </tr>
                     {% endfor %}
                 </table>
-            <p><input class="btn" type=submit value=Uncontract></form></p>
+            <p><input class="custom-btn" type=submit value=Uncontract></form></p>
             <p class="output-container">
                 {% if result != None %}
                     Here's your uncontracted text:

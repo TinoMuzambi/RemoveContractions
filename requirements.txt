@@ -2,5 +2,5 @@ Flask~=2.1.0
 gunicorn
 Jinja2
 requests
-Werkzeug~=1.0.1
+Werkzeug~=2.0
 WTForms~=2.3.1

@@ -90,15 +90,13 @@ def process_file(words):
     result_file += "\n\n" + str(count) + " replacements made."
     return result_file
 
-@app.route("/")
-def index():
-    return render_template('index.html', form=form, result=result)
-
-
-@app.route('/', methods=['POST'])
+@app.route('/', methods=['GET', 'POST'])
 def upload_files():
     form = InputForm(request.form)
-    result = process_file(form.uncontracted.data)
+    if request.method == 'POST' and form.validate():
+        result = process_file(form.uncontracted.data)
+    else:
+        result = None
     return render_template('index.html', form=form, result=result)
 
 

@@ -1,104 +1,174 @@
-# Tino Muzambi
-# 2019/08/19 08:59
-# Remove contractions from your essays
+"""A small, privacy-friendly contraction expander."""
+
 import re
 
-from flask import Flask, render_template, request
+from flask import Flask, jsonify, render_template, request
 from wtforms import Form, TextAreaField, validators
 
 app = Flask(__name__)
 
-contractions = {"won't": "will not", "shan't": "shall not", "isn't": "is not", "aren't": "are not",
-                "wasn't": "was not", "weren't": "were not", "haven't": "have not", "hasn't": "has not",
-                "hadn't": "had not", "wouldn't": "would not", "don't": "do not", "doesn't": "does not",
-                "didn't": "did not", "can't": "cannot", "shouldn't": "should not", "mightn't": "might not",
-                "mustn't": "must not", "couldn't": "could not", "'tis": "it is", "'twas": "it was",
-                "ain't": "are not"}
-tall_contractions = {"Won't": "Will not", "Shan't": "Shall not", "Isn't": "Is not", "Aren't": "Are not",
-                     "Wasn't": "Was not", "Weren't": "Were not", "Haven't": "Have not", "Hasn't": "Has not",
-                     "Hadn't": "Had not", "Wouldn't": "Would not", "Don't": "Do not", "Doesn't": "Does not",
-                     "Didn't": "Did not", "Can't": "Cannot", "Shouldn't": "Should not", "Mightn't": "Might not",
-                     "Mustn't": "Must not", "Couldn't": "Could not", "'Tis": "It is", "'Twas": "It was",
-                     "Ain't": "Are not"}
+MAX_TEXT_LENGTH = 50_000
+
+# Explicit phrases keep possessives such as "Tino's laptop" untouched. Ambiguous
+# forms ending in 'd are expanded to "would", the most useful reading for prose.
+CONTRACTIONS = {
+    "ain't": "is not",
+    "aren't": "are not",
+    "can't": "cannot",
+    "can't've": "cannot have",
+    "could've": "could have",
+    "couldn't": "could not",
+    "couldn't've": "could not have",
+    "didn't": "did not",
+    "doesn't": "does not",
+    "don't": "do not",
+    "hadn't": "had not",
+    "hadn't've": "had not have",
+    "hasn't": "has not",
+    "haven't": "have not",
+    "he'd": "he would",
+    "he'll": "he will",
+    "he's": "he is",
+    "here's": "here is",
+    "how'd": "how did",
+    "how'll": "how will",
+    "how's": "how is",
+    "i'd": "I would",
+    "i'll": "I will",
+    "i'm": "I am",
+    "i've": "I have",
+    "isn't": "is not",
+    "it'd": "it would",
+    "it'll": "it will",
+    "it's": "it is",
+    "let's": "let us",
+    "might've": "might have",
+    "mightn't": "might not",
+    "must've": "must have",
+    "mustn't": "must not",
+    "shan't": "shall not",
+    "she'd": "she would",
+    "she'll": "she will",
+    "she's": "she is",
+    "should've": "should have",
+    "shouldn't": "should not",
+    "shouldn't've": "should not have",
+    "somebody's": "somebody is",
+    "someone's": "someone is",
+    "something's": "something is",
+    "that'd": "that would",
+    "that'll": "that will",
+    "that's": "that is",
+    "there'd": "there would",
+    "there'll": "there will",
+    "there's": "there is",
+    "they'd": "they would",
+    "they'll": "they will",
+    "they're": "they are",
+    "they've": "they have",
+    "wasn't": "was not",
+    "we'd": "we would",
+    "we'll": "we will",
+    "we're": "we are",
+    "we've": "we have",
+    "weren't": "were not",
+    "what'd": "what did",
+    "what'll": "what will",
+    "what're": "what are",
+    "what's": "what is",
+    "what've": "what have",
+    "when's": "when is",
+    "where'd": "where did",
+    "where's": "where is",
+    "who'd": "who would",
+    "who'll": "who will",
+    "who's": "who is",
+    "who've": "who have",
+    "why'd": "why did",
+    "why's": "why is",
+    "won't": "will not",
+    "would've": "would have",
+    "wouldn't": "would not",
+    "wouldn't've": "would not have",
+    "y'all": "you all",
+    "you'd": "you would",
+    "you'll": "you will",
+    "you're": "you are",
+    "you've": "you have",
+    "'tis": "it is",
+    "'twas": "it was",
+}
+
+CONTRACTION_PATTERN = re.compile(
+    r"(?<![\w'])((?:"
+    + "|".join(re.escape(item) for item in sorted(CONTRACTIONS, key=len, reverse=True))
+    + r"))(?![\w'])",
+    re.IGNORECASE,
+)
 
 
 class InputForm(Form):
-    uncontracted = TextAreaField('Text', render_kw={"rows": 15, "cols": 100},
-                                 validators=[validators.InputRequired()])
+    uncontracted = TextAreaField(
+        "Text",
+        validators=[
+            validators.InputRequired(message="Enter some text to expand."),
+            validators.Length(
+                max=MAX_TEXT_LENGTH,
+                message=f"Keep the text under {MAX_TEXT_LENGTH:,} characters.",
+            ),
+        ],
+    )
 
 
-def process_file(words):
-    result_file = ""
-    count = 0
-    words = words.replace("’", "'")  # Replace weird apostrophe with utf-8 version.
-    delims = " ", "\r"
-    pattern = "|".join(map(re.escape, delims))  # Join multiple different delimeters.
-    words = re.split(pattern, words)
-    for word in words:
-        if word == "":                                          # Special cases for replacing contractions.
-            result_file += "\n\n"
-        elif "let's" in word:
-            result_file += "let us" + " "
-            count += 1
-        elif "'s" in word:
-            pre = word[0:word.find("'")]
-            post = word[word.find("'s") + 2:]
-            result_file += pre + " is" + post + " "
-            count += 1
-        elif "'ll" in word:
-            pre = word[0:word.find("'")]
-            post = word[word.find("'ll") + 3:]
-            if pre == "i":
-                pre = "I"
-            result_file += pre + " will" + post + " "
-            count += 1
-        elif "'d" in word:
-            pre = word[0:word.find("'")]
-            post = word[word.find("'d") + 2:]
-            if pre == "i":
-                pre = "I"
-            result_file += pre + " would" + post + " "
-            count += 1
-        elif "'ve" in word:
-            pre = word[0:word.find("'")]
-            post = word[word.find("'ve") + 3:]
-            if pre == "i":
-                pre = "I"
-            result_file += pre + " have" + post + " "
-            count += 1
-        elif "'re" in word:
-            pre = word[0:word.find("'")]
-            post = word[word.find("'re") + 3:]
-            result_file += pre + " are" + post + " "
-            count += 1
-        elif "'m" in word:
-            pre = word[0:word.find("'")]
-            post = word[word.find("'m") + 2:]
-            if pre == "i":
-                pre = "I"
-            result_file += pre + " am" + post + " "
-            count += 1
-        elif word in contractions:                                        # Standard contraction replacement with dict.
-            result_file += contractions[word] + " "
-            count += 1
-        elif word in tall_contractions:                   # Standard contraction replacement for uppercase with dict.
-            result_file += tall_contractions[word] + " "
-            count += 1
-        else:
-            result_file += word + " "                   # Else word isn't a contraction and it passes through.
+def _match_case(source: str, replacement: str) -> str:
+    if source.isupper():
+        return replacement.upper()
+    if source[0].isupper():
+        return replacement[0].upper() + replacement[1:]
+    return replacement
 
-    result_file += "\n\n" + str(count) + " replacements made."
-    return result_file
 
-@app.route('/', methods=['GET', 'POST'])
+def expand_contractions(text: str) -> tuple[str, int]:
+    """Expand known English contractions without changing surrounding whitespace."""
+    normalized = text.replace("’", "'")
+
+    def replace(match: re.Match[str]) -> str:
+        source = match.group(0)
+        return _match_case(source, CONTRACTIONS[source.lower()])
+
+    return CONTRACTION_PATTERN.subn(replace, normalized)
+
+@app.after_request
+def add_security_headers(response):
+    response.headers["Content-Security-Policy"] = (
+        "default-src 'self'; img-src 'self' data:; style-src 'self'; "
+        "font-src 'self'; form-action 'self'; frame-ancestors 'none'; base-uri 'self'"
+    )
+    response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    return response
+
+
+@app.route("/", methods=["GET", "POST"])
 def upload_files():
     form = InputForm(request.form)
-    if request.method == 'POST' and form.validate():
-        result = process_file(form.uncontracted.data)
-    else:
-        result = None
-    return render_template('index.html', form=form, result=result)
+    result = None
+    replacement_count = 0
+    if request.method == "POST" and form.validate():
+        result, replacement_count = expand_contractions(form.uncontracted.data)
+    return render_template(
+        "index.html",
+        form=form,
+        result=result,
+        replacement_count=replacement_count,
+        max_text_length=MAX_TEXT_LENGTH,
+    )
 
 
-if __name__ == '__main__':
-    app.run(debug=True)
+@app.get("/health")
+def health():
+    return jsonify(status="ok")
+
+
+if __name__ == "__main__":
+    app.run()

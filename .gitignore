@@ -1,8 +1,8 @@
-*.txt
-.idea
-./venv
-*.xml
-*.iml
 .DS_Store
-venv
-.vercel
+.idea/
+.pytest_cache/
+.venv/
+.vercel/
+__pycache__/
+*.py[cod]
+venv/
